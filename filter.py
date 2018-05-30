@@ -4,18 +4,19 @@ import re
 import sublime
 import sublime_plugin
 
-settings_path = 'Filter Lines.sublime-settings'
+settings_path = 'FilterLogs.sublime-settings'
 
-class PromptFilterToLinesCommand(sublime_plugin.WindowCommand):
+class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
 
     def run(self, search_type = 'string', invert_search = False):
-        self._run(search_type, "filter_to_lines", "Filter", invert_search)
+        self._run(search_type, "filter_logs_to_lines", "Filter", invert_search)
 
     def _run(self, search_type, filter_command, filter_verb, invert_search):
         self.load_settings()
         self.filter_command = filter_command
         self.search_type = search_type
         self.invert_search = invert_search
+        self.filter_verb = filter_verb
         if search_type == 'string':
             prompt = "%s to lines %s: " % (filter_verb, 'not containing' if self.invert_search else 'containing')
         else:
@@ -26,6 +27,7 @@ class PromptFilterToLinesCommand(sublime_plugin.WindowCommand):
             region = first if first.size() else view.word(first.begin())
             word = view.substr(region)
             self.search_text = word
+        self.search_text = "^.*(" + self.search_text + ")+.*$"
         sublime.active_window().show_input_panel(prompt, self.search_text, self.on_search_text_entered, None, None)
 
     def on_search_text_entered(self, search_text):
@@ -34,6 +36,10 @@ class PromptFilterToLinesCommand(sublime_plugin.WindowCommand):
         if self.window.active_view():
             self.window.active_view().run_command(self.filter_command, {
                 "needle": self.search_text, "search_type": self.search_type, "invert_search": self.invert_search })
+        if self.invert_search == False:
+            self.invert_search = True
+            self.search_text = ""
+            self._run(self.search_type, "filter_logs_to_lines", "Filter", True)
 
     def load_settings(self):
         self.settings = sublime.load_settings(settings_path)
