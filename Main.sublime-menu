@@ -8,21 +8,10 @@
                 "children":
                 [
                     { "caption": "-" },
-                    { "caption": "Include lines with Regex", "command": "prompt_filter_to_lines", "args": { "search_type": "regex", "invert_search": false } },
-                    { "caption": "Include lines with String", "command": "prompt_filter_to_lines", "args": { "search_type": "string", "invert_search": false } },
-                    { "caption": "Exclude lines with Regex", "command": "prompt_filter_to_lines", "args": { "search_type": "regex", "invert_search": true } },
-                    { "caption": "Exclude lines with String", "command": "prompt_filter_to_lines", "args": { "search_type": "string", "invert_search": true } }
-                ]
-            },
-            {
-                "id": "fold",
-                "children":
-                [
-                    { "caption": "-" },
-                    { "caption": "Fold Excluding Regex", "command": "prompt_fold_to_lines", "args": { "search_type": "regex", "invert_search": false } },
-                    { "caption": "Fold Excluding String", "command": "prompt_fold_to_lines", "args": { "search_type": "string", "invert_search": false } },
-                    { "caption": "Fold With Regex", "command": "prompt_fold_to_lines", "args": { "search_type": "regex", "invert_search": true } },
-                    { "caption": "Fold With String", "command": "prompt_fold_to_lines", "args": { "search_type": "string", "invert_search": true } }
+                    { "caption": "Include logs with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": false } },
+                    { "caption": "Include logs with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": false } },
+                    { "caption": "Exclude logs with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": true } },
+                    { "caption": "Exclude logs with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": true } }
                 ]
             }
         ]
@@ -41,17 +30,17 @@
                 "children":
                 [
                     {
-                        "caption": "Filter Lines",
+                        "caption": "FilterLogs",
                         "children":
                         [
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/Filter Lines/Filter Lines.sublime-settings"},
+                                "args": {"file": "${packages}/FilterLogs/FilterLogs.sublime-settings"},
                                 "caption": "Settings – Default"
                             },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/User/Filter Lines.sublime-settings"},
+                                "args": {"file": "${packages}/User/FilterLogs.sublime-settings"},
                                 "caption": "Settings – User"
                             }
                         ]
