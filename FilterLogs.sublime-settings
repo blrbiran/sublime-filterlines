@@ -3,7 +3,7 @@
 	"case_sensitive_string_search": false,
 
 	// If true, regular expression matching is case-sensitive
-	"case_sensitive_regex_search": true,
+	"case_sensitive_regex_search": false,
 
 	// If true, your latest search string or regex will be saved,
 	// and then restored for your next search. If false, the search
@@ -11,7 +11,7 @@
 	"preserve_search": true,
 
 	// Show source file line numbers in results
-	"line_numbers": false,
+	"line_numbers": true,
 
 	// Create new tab for filter results
 	"create_new_tab": true
