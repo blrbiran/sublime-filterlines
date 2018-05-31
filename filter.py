@@ -8,17 +8,18 @@ settings_path = 'FilterLogs.sublime-settings'
 
 class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
 
-    def run(self, search_type = 'string', invert_search = False):
+    def run(self, search_type = 'string', invert_search = False, multiple_search = False):
         if not invert_search:
-            self._run_A(search_type, "filter_logs_to_lines", "Filter")
+            self._run_A(search_type, "filter_logs_to_lines", "Filter", multiple_search)
         else:
-            self._run_B(search_type, "filter_logs_to_lines", "Filter")
+            self._run_B(search_type, "filter_logs_to_lines", "Filter", multiple_search)
 
-    def _run(self, search_type, filter_command, filter_verb, invert_search):
+    def _run(self, search_type, filter_command, filter_verb, invert_search, multiple_search):
         self.filter_command = filter_command
         self.search_type = search_type
         self.invert_search = invert_search
         self.filter_verb = filter_verb
+        self.multiple_search = multiple_search
         if search_type == 'string':
             prompt = "%s logs %s: " % (filter_verb, 'not containing' if self.invert_search else 'containing')
         else:
@@ -35,7 +36,7 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
                 pass
             else:
                 region = view.word(first.begin())
-                word = view.substr(region)
+                word = view.substr(region).strip()
                 self.search_text_1 = word
                 self.search_text_1 = "^.*(" + self.search_text_1 + ")+.*$"
             sublime.active_window().show_input_panel(prompt, self.search_text_1, self.on_search_text_entered, None, None)
@@ -51,33 +52,30 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
                 pass
             else:
                 region = view.word(first.begin())
-                word = view.substr(region)
+                word = view.substr(region).strip()
                 self.search_text_2 = word
                 self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
             sublime.active_window().show_input_panel(prompt, self.search_text_2, self.on_search_text_entered, None, None)
 
-    def _run_A(self, search_type, filter_command, filter_verb):
+    def _run_A(self, search_type, filter_command, filter_verb, multiple_search):
         self.load_settings()
-        print("run_A_1")
-        self._run(search_type, filter_command, filter_verb, False)
+        self._run(search_type, filter_command, filter_verb, False, multiple_search)
 
-    def _run_B(self, search_type, filter_command, filter_verb):
+    def _run_B(self, search_type, filter_command, filter_verb, multiple_search):
         self.load_settings()
-        print("run_B")
-        self._run(search_type, filter_command, filter_verb, True)
-        self.save_settings()
+        self._run(search_type, filter_command, filter_verb, True, multiple_search)
 
     def on_search_text_entered(self, search_text):
         self.search_text = search_text
+        self.window_name = self.window.active_view().name()
         if self.window.active_view():
             self.window.active_view().run_command(self.filter_command, {
-                "needle": self.search_text, "search_type": self.search_type, "invert_search": self.invert_search })
-        if not self.invert_search:
+                "needle": self.search_text, "search_type": self.search_type, "invert_search": self.invert_search, "window_name": self.window_name })
+        if not self.invert_search and self.multiple_search:
             self.invert_search = True
             self.search_text_2 = "^.*()+.*$"
             self.save_settings()
-            print("run_A_2")
-            self._run_B(self.search_type, "filter_logs_to_lines", "Filter")
+            self._run_B(self.search_type, "filter_logs_to_lines", "Filter", self.multiple_search)
         self.save_settings()
 
     def load_settings(self):
@@ -95,7 +93,7 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
 
 class FilterLogsToLinesCommand(sublime_plugin.TextCommand):
 
-    def run(self, edit, needle, search_type, invert_search):
+    def run(self, edit, needle, search_type, invert_search, window_name):
         settings = sublime.load_settings(settings_path)
         flags = self.get_search_flags(search_type, settings)
         lines = itertools.groupby(self.view.find_all(needle, flags), self.view.line)
@@ -103,6 +101,7 @@ class FilterLogsToLinesCommand(sublime_plugin.TextCommand):
         self.line_numbers = settings.get('line_numbers', False)
         self.new_tab = settings.get('create_new_tab', True)
         self.invert_search = invert_search ^ (not self.new_tab)
+        self.window_name = window_name
         self.show_filtered_lines(edit, lines)
 
     def get_search_flags(self, search_type, settings):
@@ -139,7 +138,7 @@ class FilterLogsToLinesCommand(sublime_plugin.TextCommand):
         results_view.set_syntax_file(self.view.settings().get('syntax'))
 
     def prepare_output_line(self, line):
-        if self.line_numbers and not self.invert_search:
+        if self.line_numbers and not self.invert_search and self.window_name != 'Filter Results':
             line_number = self.view.rowcol(line.begin())[0] + 1
             return '%5d: %s' % (line_number, self.view.substr(line))
         else:

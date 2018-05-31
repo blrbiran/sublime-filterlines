@@ -1,6 +1,7 @@
 [
-    { "caption": "Filter Logs: Include lines with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": false } },
-    { "caption": "Filter Logs: Include lines with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": false } },
-    { "caption": "Filter Logs: Exclude lines with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": true } },
-    { "caption": "Filter Logs: Exclude lines with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": true } }
+    { "caption": "Filter Logs: Include logs with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": false, "multiple_search": false } },
+    { "caption": "Filter Logs: Complex logs with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": false, "multiple_search": true } },
+    { "caption": "Filter Logs: Include logs with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": false, "multiple_search": false } },
+    { "caption": "Filter Logs: Exclude logs with Regex", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "regex", "invert_search": true, "multiple_search": false } },
+    { "caption": "Filter Logs: Exclude logs with String", "command": "prompt_filter_logs_to_lines", "args": { "search_type": "string", "invert_search": true, "multiple_search": false } }
 ]
