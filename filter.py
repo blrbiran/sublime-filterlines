@@ -31,14 +31,16 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
                 region = first
                 word = view.substr(region)
                 self.search_text_1 = word
-                self.search_text_1 = "^.*(" + self.search_text_1 + ")+.*$"
+                if search_type != 'string':
+                    self.search_text_1 = "^.*(" + self.search_text_1 + ")+.*$"
             elif self.search_text_1:
                 pass
             else:
                 region = view.word(first.begin())
                 word = view.substr(region).strip()
                 self.search_text_1 = word
-                self.search_text_1 = "^.*(" + self.search_text_1 + ")+.*$"
+                if search_type != 'string':
+                    self.search_text_1 = "^.*(" + self.search_text_1 + ")+.*$"
             sublime.active_window().show_input_panel(prompt, self.search_text_1, self.on_search_text_entered, None, None)
         else:
             view = self.window.active_view()
@@ -47,14 +49,16 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
                 region = first
                 word = view.substr(region)
                 self.search_text_2 = word
-                self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
+                if search_type != 'string':
+                    self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
             elif self.search_text_2:
                 pass
             else:
                 region = view.word(first.begin())
                 word = view.substr(region).strip()
                 self.search_text_2 = word
-                self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
+                if search_type != 'string':
+                    self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
             sublime.active_window().show_input_panel(prompt, self.search_text_2, self.on_search_text_entered, None, None)
 
     def _run_A(self, search_type, filter_command, filter_verb, multiple_search):
@@ -73,7 +77,9 @@ class PromptFilterLogsToLinesCommand(sublime_plugin.WindowCommand):
                 "needle": self.search_text, "search_type": self.search_type, "invert_search": self.invert_search, "window_name": self.window_name })
         if not self.invert_search and self.multiple_search:
             self.invert_search = True
-            self.search_text_2 = "^.*()+.*$"
+            self.search_text_2 = ""
+            if search_type != 'string':
+                self.search_text_2 = "^.*(" + self.search_text_2 + ")+.*$"
             self.save_settings()
             self._run_B(self.search_type, "filter_logs_to_lines", "Filter", self.multiple_search)
         self.save_settings()
